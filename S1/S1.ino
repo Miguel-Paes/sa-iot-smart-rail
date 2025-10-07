@@ -41,4 +41,10 @@ void setup() {
 
 void loop() {
 
+  String msg = "Miguel: Oi";
+  String topico = "AulaIoT/msg";
+  mqtt.publish(topico.c_str(), msg.c_str());
+  delay(2000);
+  mqtt.loop();
+
 }
