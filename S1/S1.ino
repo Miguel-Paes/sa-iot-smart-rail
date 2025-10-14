@@ -11,9 +11,21 @@ const String PASS = "8120gv08";
 
 const String brokerURL = "test.mosquitto.org";
 const int brokerPort = 1883;
+const String topic = "miguel123";
 
 const String brokerUser = "";
 const String brokerPass = "";
+
+const String mensagem_ligar[6] = {"Acender", "Ligar", "On", "1", "True", "Xazam"};
+const String mensagem_desligar[5] = {"Apagar", "Desligar", "Off", "0", "False"};
+
+
+// int nome[ = {}]
+void callback(char* topico, byte* mensagem, unsigned int length){
+  Serial.println("Recebido");
+  Serial.println(topico);
+}
+
 
 void setup() {
   Serial.begin(115200); //Configura a placa para mostrar na tela
@@ -36,15 +48,24 @@ void setup() {
       Serial.println(".");
       delay(200);
     }
+    mqtt.setCallback(callback);
+    mqtt.subscribe(topic.c_str());
+
     Serial.println("\nConectado com sucesso ao Broker");
 }
 
 void loop() {
 
-  String msg = "Miguel: Oi";
-  String topico = "AulaIoT/msg";
-  mqtt.publish(topico.c_str(), msg.c_str());
-  delay(2000);
-  mqtt.loop();
+  String mensagem = "";
+  if(Serial.available() > 0) {
+    mensagem = Serial.readStringUntil('\n');
+    Serial.print("Mensagem digitada: ");
+    Serial.println(mensagem);
+    mensagem = "Miguel: " + mensagem;
+    mqtt.publish(topic.c_str(), mensagem.c_str());
+  }
 
 }
+
+
+
