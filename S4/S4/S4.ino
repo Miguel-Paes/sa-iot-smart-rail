@@ -18,6 +18,8 @@ const int brokerPort = 1883;
 const String brokerUser = ""; // variavel para o user do broker
 const String brokerPass = ""; // variavel para a senha do borker
 
+const String topico = "TopicoNathan"; // nome do topico
+
 void setup() {
   Serial.begin(115200); // configura a placa para mostrar na tela
   WiFi.begin(SSID, PASS); // tenta conectar na rede
@@ -46,10 +48,33 @@ void setup() {
     Serial.print(".");
     delay(200);
   }
+
+  mqtt.subscribe(topico.c_str()); // inscrever em um topico
+  mqtt.subscribe("miguel123");
+  mqtt.setCallback(callback);
   Serial.println("Conectado com sucesso!");
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  String mensagem = "";
+  if(Serial.available() > 0){
+    mensagem = Serial.readStringUntil('\n');
+    Serial.print("Mensagem digitada: ");
+    Serial.println(mensagem);
+    mensagem = "Nathan: " + mensagem;
+    mqtt.publish("miguel123", mensagem.c_str()); //envia msg
+  }  
+  mqtt.loop();
+}
+
+// ----------------------- abaixo do loop-----------------------
+void callback(char* topic, byte* payload, unsigned long length){
+  String mensagemRecebida = "";
+  for(int i = 0; i < length; i++){
+    mensagemRecebida += (char) payload[i];
+  }
+  Serial.println(mensagemRecebida);
+  // fazer o controle aqui
+
 
 }
