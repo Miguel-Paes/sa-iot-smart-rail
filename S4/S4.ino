@@ -1,26 +1,19 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
+#include <WiFiClientSecure.h>
+#include "env.h"
 
+WiFiClientSecure wifiClient;
 WiFiClient client;         // cria o objeto para o wifi
 PubSubClient mqtt(client);// cria o objeto para o mqtt usando wifi
 
-// define o nome da rede
-const String SSID = "FIESC_IOT_EDU";
-// define a senha da rede
-const String PASS = "8120gv08";
-
-// define o endereço do broker
-const String brokerURL = "test.mosquitto.org";
-// define a porta do broker
-const int brokerPort = 1883;
-
-// usuário e senha que farão conexão com o servidor
-const String brokerUser = ""; // variavel para o user do broker
-const String brokerPass = ""; // variavel para a senha do borker
+const String mensagem_ligar[6] = {"Acender", "Ligar", "On", "1", "True"};
+const String mensagem_ligar[5] = {"Apagar", "Desligar", "Off", "0", "False"};
 
 const String topico = "TopicoNathan"; // nome do topico
 
 void setup() {
+  wifiClient.setInscure();
   Serial.begin(115200); // configura a placa para mostrar na tela
   WiFi.begin(SSID, PASS); // tenta conectar na rede
   Serial.println("Conectando no WiFi");
@@ -33,20 +26,21 @@ void setup() {
   Serial.println("\n Conectado com sucesso!");
 
   // configura o servidor do broker/porta
-  mqtt.setServer(brokerURL.c_str(), brokerPort);
+  mqtt.setServer(BROKER_URL, BROKER_PORT);
   Serial.println("Conectando no Broker");
   
   // cria um nome que começa com s4-
-  String boardID = "S4-"; 
+  String userID = "S4-NATHAN"; 
 
   // junta o "s4-" com um numero aleatorio hexadecimal
-  boardID += String(random(0xffff), HEX);
+  userID += String(random(0xffff), HEX);
 
   // tenta conectar ao Broker
   // enquanto não estiver conectado mostra "."
-  while(!mqtt.connect(boardID.c_str())){
-    Serial.print(".");
-    delay(200);
+  while(!mqtt.connected()){
+    mqtt.connect(userID.c_str(), BROKER_USR_NAME, BROKER_USR_PASS);
+    Serial.print('.');
+    delay(2000);
   }
 
   mqtt.subscribe(topico.c_str()); // inscrever em um topico
