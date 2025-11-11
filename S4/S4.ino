@@ -7,12 +7,42 @@ WiFiClientSecure wifiClient;
 WiFiClient client;         // cria o objeto para o wifi
 PubSubClient mqtt(client);// cria o objeto para o mqtt usando wifi
 
-const String mensagem_ligar[6] = {"Acender", "Ligar", "On", "1", "True"};
-const String mensagem_ligar[5] = {"Apagar", "Desligar", "Off", "0", "False"};
+const String topico = "SmartRail/S4/Trem/vel"; // nome do topico
 
-const String topico = "TopicoNathan"; // nome do topico
+// declaração de variaveis
+const int ledVermelho = 7;
+const int ledVerde = 6;
+
+// ----------------------- abaixo do loop/funções principais do sensor-----------------------
+
+// funcao para controlar leds
+void controladorLeds(byte velocidade){
+  if(velocidade > 0) {
+    digitalWrite(ledVerde, HIGH);
+    digitalWrite(ledVermelho, LOW);
+  } else if(velocidade == 100){
+    digitalWrite(ledVerde, LOW);
+    digitalWrite(ledVermelho, HIGH);
+  } else {
+    digitalWrite(ledVerde, LOW);
+    digitalWrite(ledVermelho, LOW);
+  }
+}
+
+void callback(char* topic, byte* payload, unsigned long length){
+  String mensagemRecebida = "";
+  for(int i = 0; i < length; i++){
+    mensagemRecebida += (char) payload[i];
+  }
+  byte int velocidade = mensagemRecebida.toInt();
+  Serial.println(mensagemRecebida);
+  // fazer o controle de leds aqui
+  controladorLeds(velocidade);
+}
 
 void setup() {
+  pinMode(ledVermelho, OUTPUT);
+  pinMode(ledVerde, OUTPUT);
   wifiClient.setInscure();
   Serial.begin(115200); // configura a placa para mostrar na tela
   WiFi.begin(SSID, PASS); // tenta conectar na rede
@@ -59,16 +89,5 @@ void loop() {
     mqtt.publish("miguel123", mensagem.c_str()); //envia msg
   }  
   mqtt.loop();
-}
-
-// ----------------------- abaixo do loop-----------------------
-void callback(char* topic, byte* payload, unsigned long length){
-  String mensagemRecebida = "";
-  for(int i = 0; i < length; i++){
-    mensagemRecebida += (char) payload[i];
-  }
-  Serial.println(mensagemRecebida);
-  // fazer o controle aqui
-
-
+  callback(byte velocidade);
 }
