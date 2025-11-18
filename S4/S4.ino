@@ -20,7 +20,7 @@ void controladorLeds(byte velocidade){
   if(velocidade > 0) {
     digitalWrite(ledVerde, HIGH);
     digitalWrite(ledVermelho, LOW);
-  } else if(velocidade == 100){
+  } else if(velocidade < 0){
     digitalWrite(ledVerde, LOW);
     digitalWrite(ledVermelho, HIGH);
   } else {
