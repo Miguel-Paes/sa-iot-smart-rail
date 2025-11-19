@@ -7,11 +7,12 @@ WiFiClientSecure wifiClient;
 WiFiClient client;         // cria o objeto para o wifi
 PubSubClient mqtt(client);// cria o objeto para o mqtt usando wifi
 
-const String topico = "SmartRail/S4/Trem/vel"; // nome do topico
+const String topico = "SmartRail/S4/Trem/Vel"; // nome do topico
 
 // declaração de variaveis
-const int ledVermelho = 7;
-const int ledVerde = 6;
+const byte ledVermelho = 23;
+const byte ledVerde = 24;
+const byte ledAzul = 25;
 
 // ----------------------- abaixo do loop/funções principais do sensor-----------------------
 
@@ -29,6 +30,7 @@ void controladorLeds(byte velocidade){
   }
 }
 
+// funcao callback
 void callback(char* topic, byte* payload, unsigned long length){
   String mensagemRecebida = "";
   for(int i = 0; i < length; i++){
@@ -40,20 +42,50 @@ void callback(char* topic, byte* payload, unsigned long length){
   controladorLeds(velocidade);
 }
 
+// funcao para conectar wifi
+void conectarWifi(){
+  Serial.println("Conectando no WiFi");
+  // enquanto não estiver conectado no wifi mostra "." e liga o led amarelo
+  while(WiFi.status() != WL_CONNECTED){
+    ledcWrite(ledVermelho, 150);
+    ledcWrite(ledVerde, 150);
+    ledcWrite(ledAzul, 0);
+    delay(1000);
+  }
+  Serial.println("\n Conectado com sucesso!");
+}
+
+// funcao para conectar broker
+void conectarBroker(){
+  // enquanto não estiver conectado mostra "."
+  while(!mqtt.connected()){
+    mqtt.connect(userID.c_str(), BROKER_USR_NAME, BROKER_USR_PASS);
+    Serial.print('.');
+    ledcWrite(ledVermelho, 150);
+    ledcWrite(ledAzul, 150);
+    ledcWrite(ledVerde, 0);
+    delay(2000);
+  }
+}
+
+// funcao principal
 void setup() {
   pinMode(ledVermelho, OUTPUT);
   pinMode(ledVerde, OUTPUT);
+  pinMode(ledAzul, OUTPUT);
+
+  // define os leds como entrada analogico
+  ledcAttach(ledVermelho, 5000, 8);
+  ledcAttach(ledVerde, 5000, 8);
+  ledcAttach(ledAzul, 5000, 8);
+
+  //configuração do wifi
   wifiClient.setInscure();
   Serial.begin(115200); // configura a placa para mostrar na tela
   WiFi.begin(SSID, PASS); // tenta conectar na rede
-  Serial.println("Conectando no WiFi");
-
-  // enquanto não estiver conectado mostra "."
-  while(WiFi.status() != WL_CONNECTED){
-    Serial.println(".");
-    delay(200);
-  }
-  Serial.println("\n Conectado com sucesso!");
+  
+  //  conectando no wifi
+  conectarWifi();
 
   // configura o servidor do broker/porta
   mqtt.setServer(BROKER_URL, BROKER_PORT);
@@ -65,13 +97,7 @@ void setup() {
   // junta o "s4-" com um numero aleatorio hexadecimal
   userID += String(random(0xffff), HEX);
 
-  // tenta conectar ao Broker
-  // enquanto não estiver conectado mostra "."
-  while(!mqtt.connected()){
-    mqtt.connect(userID.c_str(), BROKER_USR_NAME, BROKER_USR_PASS);
-    Serial.print('.');
-    delay(2000);
-  }
+  conectarBroker();
 
   mqtt.subscribe(topico.c_str()); // inscrever em um topico
   mqtt.subscribe("miguel123");
