@@ -13,6 +13,10 @@ const String topico = "SmartRail/S4/Trem/Vel"; // nome do topico
 const byte ledVermelho = 23;
 const byte ledVerde = 24;
 const byte ledAzul = 25;
+const int motorA1 = 2; 
+const int motorA2 = 3;  
+const int motorB1 = 4;
+const int motorB2 = 5;
 
 // ----------------------- abaixo do loop/funções principais do sensor-----------------------
 
@@ -89,8 +93,92 @@ void conectarBroker(){
   }
 }
 
+// funcao do motor A para mover para frente
+void paraFrenteMotorA(){
+  digitalWrite(motorA1, HIGH);
+  digitalWrite(motorA2, LOW);
+  digitalWrite(motorB1, LOW);
+  digitalWrite(motorB2, LOW);
+
+  analogWrite(motorA2, 127); 
+  
+  ledcWrite(ledVerde, 150);
+  ledcWrite(ledAzul, 0);
+  ledcWrite(ledVermelho, 0);
+
+  delay(2000);
+}
+
+// funcao do motor B para dar re
+
+void darReMotorB(){
+  digitalWrite(motorB1, LOW);
+  digitalWrite(motorB2, HIGH);
+  digitalWrite(motorA1, LOW);
+  digitalWrite(motorA2, LOW);
+
+  analogWrite(motorB2, 127);
+
+  // acender led amarelo para dar re
+  ledcWrite(ledVerde, 150);
+  ledcWrite(ledAzul, 0);
+  ledcWrite(ledVermelho, 150);
+  delay(2000);
+}
+
+// funcao para parar todos os motores
+void pararMotores(){
+  digitalWrite(motorA1, LOW);
+  digitalWrite(motorA2, LOW);
+  digitalWrite(motorB1, LOW);
+  digitalWrite(motorB2, LOW);
+
+  // acender led vermelho para parar todos os motores
+  ledcWrite(ledVerde, 0);
+  ledcWrite(ledAzul, 0);
+  ledcWrite(ledVermelho, 150);
+  delay(2000);
+}
+
+// funcao do motor A para dar re
+void darReMotorA(){;
+  digitalWrite(motorA1, LOW);
+  digitalWrite(motorA2, HIGH);
+  digitalWrite(motorB1, LOW);
+  digitalWrite(motorB2, LOW);
+
+  analogWrite(motorA2, 127);
+
+  // acender led amarelo para dar re
+  ledcWrite(ledVerde, 150);
+  ledcWrite(ledAzul, 0);
+  ledcWrite(ledVermelho, 150);
+  delay(2000);
+}
+
+// funcao do motor B para mover para frente
+void paraFrenteMotorB(){
+  digitalWrite(motorB1, HIGH);
+  digitalWrite(motorB2, LOW);
+  digitalWrite(motorA1, LOW);
+  digitalWrite(motorA2, LOW);
+
+  analogWrite(motorB1, 127);
+
+  ledcWrite(ledVerde, 150);
+  ledcWrite(ledAzul, 0);
+  ledcWrite(ledVermelho, 0);
+  delay(2000);
+}
+
 // funcao principal
 void setup() {
+  //define os pinos dos motores
+  pinMode(motorA1, OUTPUT);
+  pinMode(motorA2, OUTPUT);
+  pinMode(motorB1, OUTPUT);
+  pinMode(motorB2, OUTPUT);
+  // define os pinos dos leds
   pinMode(ledVermelho, OUTPUT);
   pinMode(ledVerde, OUTPUT);
   pinMode(ledAzul, OUTPUT);
@@ -128,4 +216,11 @@ void loop() {
   }  
   mqtt.loop();
   callback(byte velocidade);
+
+  paraFrenteMotorA();
+  darReMotorB();
+  pararMotores();
+  darReMotorA();
+  paraFrenteMotorB();
+  pararMotores();
 }
