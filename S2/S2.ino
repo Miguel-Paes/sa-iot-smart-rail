@@ -20,6 +20,22 @@ const byte pinoServo1 = 2;
 
 float duracao, distancia;
 
+void controladorLedsPresenca(float distance){
+	if(distance > 1000){
+		digitalWrite(ledVerde, HIGH);
+    digitalWrite(ledVermelho, LOW);
+    delay(1000);
+	} else if(distance < 1000){
+    digitalWrite(ledVerde, LOW);
+    digitalWrite(ledVermelho, HIGH);
+    delay(1000);
+  } else {
+    digitalWrite(ledVerde, LOW);
+    digitalWrite(ledVermelho, LOW);
+    delay(1000);
+  }
+}
+
 void atuadorServo() 
 {
   	// mover o servo motor para 0 graus
@@ -146,7 +162,6 @@ void setup()
 
 void loop()
 {
-	sensorLuminosidade(valorLdr);
   calcularDistanciaDuracaoPresenca1(duracao, distancia);
   atuadorServo();
   calcularDistanciaDuracaoPresenca2(duracao, distancia);
