@@ -2,61 +2,152 @@
 #include <PubSubClient.h>
 #include "env.h"
 #include <WiFiClientSecure.h>
+#include <Servo.h>
 
 WiFiClient client; //cria objeto p/ wifi
 PubSubClient mqtt(client);
 
-const String mensagem_ligar[6] = {"Acender", "Ligar", "On", "1", "True", "Xazam"};
-const String mensagem_desligar[5] = {"Apagar", "Desligar", "Off", "0", "False"};
+Servo meuServo1;
 
-// int nome[ = {}]
-void callback(char* topico, byte* mensagem, unsigned int length){
-  Serial.println("Recebido");
-  Serial.println(topico);
+// declaração de variaveis
+const byte ldr = A0;
+int valorLdr = 0;
+const byte pinoTrig = 13;
+const byte pinoEcho = 12;
+const byte pinoEcho2 = 11;
+const byte pinoTrig2 = 10;
+const byte pinoServo1 = 2;
+
+float duracao, distancia;
+
+void atuadorServo() 
+{
+  	// mover o servo motor para 0 graus
+  	meuServo1.write(0);
+  	delay(1000);
+  	// mover o servo para 180 graus
+  	meuServo1.write(180);
+  	delay(1000);
+  	// retorna para a posição inicial
+  	meuServo1.write(90);
+  	delay(1000);
 }
 
-void setup() {
-  wifiClient.setInsecure():
-  Serial.begin (115200); //configura a placa para mostrar na tela
-  WiFi.begin(SSID, PASS); //tenta conectar na rede
-  Serial.println("Conectando no WiFi");
-  while (WiFi.status() != WL_CONNECTED){
-    Serial.print(".");
-    delay(200);
-  }
-  Serial.println("conectado com sucesso");
+void calcularDistanciaDuracaoPresenca1(float distance, float duration)
+{
+	duration = pulseIn(pinoEcho, HIGH);
+  	distance = (duration*0.343)/2;
+  	Serial.println("Distancia do sensor de presenca1: ");
+  	Serial.println(distance);
+	delay(1000);
+}
 
+void calcularDistanciaDuracaoPresenca2(double distance2, double duration2)
+{
+	duration2 = pulseIn(pinoEcho2, HIGH);
+  	distance2 = (duration2*0.343)/2;
+    Serial.println("Distancia do sensor de presenca 2: ");
+    Serial.println(distance2);
+    delay(1000);            
+}
+
+void sensorLuminosidade(int valor){
+	valor = analogRead(ldr);
+	Serial.println("Valor lido pelo LDR: ");
+  	Serial.println(valor);
+}
+
+void callback(char* topic, byte* payload, unsigned long length){
+  String mensagemRecebida = "";
+  for(int i = 0; i < length; i++){
+    mensagemRecebida += (char) payload[i];
+  }
+  byte int velocidade = mensagemRecebida.toInt();
+  Serial.println(mensagemRecebida);
+  // fazer o controle de leds aqui
+
+}
+
+void conectarWifi(){
+  Serial.println("Conectando no WiFi");
+  // enquanto não estiver conectado no wifi mostra "." e liga o led amarelo
+  while(WiFi.status() != WL_CONNECTED){
+    ledcWrite(ledVermelho, 150);
+    ledcWrite(ledVerde, 150);
+    ledcWrite(ledAzul, 0);
+    delay(1000);
+  }
+  Serial.println("\n Conectado com sucesso!");
+}
+
+// funcao configurar servidor do broker/porta
+String configurarServidorBroker(){
+  // configura o servidor do broker/porta
   mqtt.setServer(BROKER_URL, BROKER_PORT);
   Serial.println("Conectando no Broker");
+  
+  // cria um nome que começa com s2-
+  String userID = "S2-JOSE"; 
 
-  String boardID = "S2-"; // cria um nome que conecta com S''
-
-  boardID += String(random(0xffff),HEX); //nta o S'' com um número aleatório hexadecimal
-
-  while(!mqtt.connected()) {
-      mqtt.connect(userId.c_str(), BROKER_USR_NAME, BROKER_USR_PASS); 
-      Serial.println(".");
-    delay(200);
-  }
-  mqtt.setCallback(callback);
-    mqtt.subscribe(TOPIC2);
-
-  Serial.println("\nConectado cpm sucesso ao broker!");
+  // junta o "s4-" com um numero aleatorio hexadecimal
+  userID += String(random(0xffff), HEX);
+  return userID;
 }
 
-
-
-void loop() {
-  // put your main code here, to run repeatedly:
-
-  String mensagem = "";
-  if(Serial.available() > 0) {
-    mensagem = Serial.readStringUntil('\n');
-    Serial.print("Mensagem digitada: ");
-    Serial.println(mensagem);
-    mensagem = "Miguel: " + mensagem;
-    mqtt.publish(TOPIC1, mensagem.c_str());
+// funcao para conectar broker
+void conectarBroker(){
+  String userID = configurarServidorBroker();
+  // enquanto não estiver conectado mostra "."
+  while(!mqtt.connected()){
+    if(mqtt.connect(userID.c_str(), BROKER_USR_NAME, BROKER_USR_PASS)){
+      Serial.print('.');
+      ledcWrite(ledVermelho, 150);
+      ledcWrite(ledAzul, 150);
+      ledcWrite(ledVerde, 0);
+      delay(2000);
+    } else { // caso dê erro de conexao com broker
+      ledcWrite(ledVermelho, 255);
+      ledcWrite(ledAzul, 0);
+      ledcWrite(ledVerde, 0);
+      delay(2000);
+    }
   }
+}
 
+void setup()
+{
+  pinMode(ledVermelho, OUTPUT);
+  pinMode(ledVerde, OUTPUT);
+  pinMode(ledAzul, OUTPUT);
 
+  // define os leds como entrada analogico
+  ledcAttach(ledVermelho, 5000, 8);
+  ledcAttach(ledVerde, 5000, 8);
+  ledcAttach(ledAzul, 5000, 8);
+  
+  // configuração do wifi
+  wifiClient.setInscure();
+  Serial.begin(115200); //Configura a placa para mostrar na tela
+  WiFi.begin(SSID, PASS); //Tenta conectar na rede
+  
+  // conectando no wifi
+  conectarWifi();
+  //conectando no broker
+  conectarBroker();
+
+  meuServo1.attach(pinoServo1);
+  	pinMode(pinoTrig, OUTPUT);
+  	pinMode(pinoEcho, INPUT);
+  	pinMode(pinoTrig2, OUTPUT);
+  	pinMode(pinoEcho2, INPUT);
+	pinMode(ldr, INPUT);
+  	Serial.begin(9600);
+}
+
+void loop()
+{
+	sensorLuminosidade(valorLdr);
+  calcularDistanciaDuracaoPresenca1(duracao, distancia);
+  atuadorServo();
+  calcularDistanciaDuracaoPresenca2(duracao, distancia);
 }
