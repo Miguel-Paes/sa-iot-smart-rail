@@ -1,6 +1,14 @@
 //ARQUIVO S3 - VINICIUS RUBENS DOS SANTOS - SMART RAIL (SR)
 
 #include <Servo.h>
+#include <WiFi.h>
+#include <PubSubClient.h>
+#include <WiFiClientSecure.h>
+#include "env.h"
+
+WiFiClientSecure wifiClient;
+WiFiClient client;         // cria o objeto para o wifi
+PubSubClient mqtt(client);// cria o objeto para o mqtt usando wifi
 
 Servo meuServo1; // cria um objeto do tipo servo
 Servo meuServo2; 
