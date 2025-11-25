@@ -186,8 +186,9 @@ void setup() {
   // conectando no broker
   conectarBroker();
 
-  mqtt.subscribe(topico.c_str());
-  mqtt.subscribe("miguel123");
+  mqtt.publish(topico.c_str());
+  mqtt.publish("SmartRail/S4/Trem/Vel");
+  mqtt.publish("SmartRail/S4/Trem/Controle_led_rgb_s4");
   mqtt.setCallback(callback);
   Serial.println("Conectado com sucesso!");
 }
