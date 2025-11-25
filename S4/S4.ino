@@ -95,25 +95,25 @@ void conectarBroker(){
 
 // funcao do motor A para mover para frente
 void paraFrenteMotorA(){
-  digitalWrite(motorA1, HIGH);
-  digitalWrite(motorA2, LOW);
+  digitalWrite(motorA2, HIGH);
+  analogWrite(motorA2, 127);
+
+  digitalWrite(motorA1, LOW);
   digitalWrite(motorB1, LOW);
   digitalWrite(motorB2, LOW);
-
-  analogWrite(motorA2, 127); 
-
   delay(2000);
 }
 
 // funcao do motor B para dar re
 
 void darReMotorB(){
-  digitalWrite(motorB1, LOW);
   digitalWrite(motorB2, HIGH);
+  analogWrite(motorB2, 127);
+
+  digitalWrite(motorB1, LOW);
   digitalWrite(motorA1, LOW);
   digitalWrite(motorA2, LOW);
 
-  analogWrite(motorB2, 127);
   delay(2000);
 }
 
@@ -129,23 +129,24 @@ void pararMotores(){
 
 // funcao do motor A para dar re
 void darReMotorA(){;
-  digitalWrite(motorA1, LOW);
   digitalWrite(motorA2, HIGH);
+  analogWrite(motorA2, 127);
+
+  digitalWrite(motorA1, LOW);
   digitalWrite(motorB1, LOW);
   digitalWrite(motorB2, LOW);
 
-  analogWrite(motorA2, 127);
   delay(2000);
 }
 
 // funcao do motor B para mover para frente
 void paraFrenteMotorB(){
   digitalWrite(motorB1, HIGH);
+  ledcWrite(motorB1, 127);
+
   digitalWrite(motorB2, LOW);
   digitalWrite(motorA1, LOW);
   digitalWrite(motorA2, LOW);
-
-  analogWrite(motorB1, 127);
 
   delay(2000);
 }
@@ -157,6 +158,13 @@ void setup() {
   pinMode(motorA2, OUTPUT);
   pinMode(motorB1, OUTPUT);
   pinMode(motorB2, OUTPUT);
+
+  // define os motores como entrada analogico
+  ledcAttach(motorA1, 5000, 8);
+  ledcAttach(motorA2, 5000, 8);
+  ledcAttach(motorB1, 5000, 8);
+  ledcAttach(motorB2, 5000, 8);
+
   // define os pinos dos leds
   pinMode(ledVermelho, OUTPUT);
   pinMode(ledVerde, OUTPUT);
