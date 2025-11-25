@@ -49,7 +49,7 @@ void callback(char* topic, byte* payload, unsigned long length){
 // funcao para conectar wifi
 void conectarWifi(){
   Serial.println("Conectando no WiFi");
-  // enquanto não estiver conectado no wifi mostra "." e liga o led amarelo
+  // Loop para conectar no wifi
   while(WiFi.status() != WL_CONNECTED){
     ledcWrite(ledVermelho, 150);
     ledcWrite(ledVerde, 150);
@@ -65,7 +65,7 @@ String configurarServidorBroker(){
   mqtt.setServer(BROKER_URL, BROKER_PORT);
   Serial.println("Conectando no Broker");
   
-  // cria um nome que começa com s4-
+  // cria um userID
   String userID = "S4-NATHAN"; 
 
   // junta o "s4-" com um numero aleatorio hexadecimal
@@ -76,7 +76,7 @@ String configurarServidorBroker(){
 // funcao para conectar broker
 void conectarBroker(){
   String userID = configurarServidorBroker();
-  // enquanto não estiver conectado mostra "."
+  // Loop para conectar no broker
   while(!mqtt.connected()){
     if(mqtt.connect(userID.c_str(), BROKER_USR_NAME, BROKER_USR_PASS)){
       Serial.print('.');
@@ -101,10 +101,6 @@ void paraFrenteMotorA(){
   digitalWrite(motorB2, LOW);
 
   analogWrite(motorA2, 127); 
-  
-  ledcWrite(ledVerde, 150);
-  ledcWrite(ledAzul, 0);
-  ledcWrite(ledVermelho, 0);
 
   delay(2000);
 }
@@ -118,11 +114,6 @@ void darReMotorB(){
   digitalWrite(motorA2, LOW);
 
   analogWrite(motorB2, 127);
-
-  // acender led amarelo para dar re
-  ledcWrite(ledVerde, 150);
-  ledcWrite(ledAzul, 0);
-  ledcWrite(ledVermelho, 150);
   delay(2000);
 }
 
@@ -133,10 +124,6 @@ void pararMotores(){
   digitalWrite(motorB1, LOW);
   digitalWrite(motorB2, LOW);
 
-  // acender led vermelho para parar todos os motores
-  ledcWrite(ledVerde, 0);
-  ledcWrite(ledAzul, 0);
-  ledcWrite(ledVermelho, 150);
   delay(2000);
 }
 
@@ -148,11 +135,6 @@ void darReMotorA(){;
   digitalWrite(motorB2, LOW);
 
   analogWrite(motorA2, 127);
-
-  // acender led amarelo para dar re
-  ledcWrite(ledVerde, 150);
-  ledcWrite(ledAzul, 0);
-  ledcWrite(ledVermelho, 150);
   delay(2000);
 }
 
@@ -165,9 +147,6 @@ void paraFrenteMotorB(){
 
   analogWrite(motorB1, 127);
 
-  ledcWrite(ledVerde, 150);
-  ledcWrite(ledAzul, 0);
-  ledcWrite(ledVermelho, 0);
   delay(2000);
 }
 
@@ -199,7 +178,7 @@ void setup() {
   // conectando no broker
   conectarBroker();
 
-  mqtt.subscribe(topico.c_str()); // inscrever em um topico
+  mqtt.subscribe(topico.c_str());
   mqtt.subscribe("miguel123");
   mqtt.setCallback(callback);
   Serial.println("Conectado com sucesso!");
@@ -212,10 +191,10 @@ void loop() {
     Serial.print("Mensagem digitada: ");
     Serial.println(mensagem);
     mensagem = "Nathan: " + mensagem;
-    mqtt.publish("miguel123", mensagem.c_str()); //envia msg
+    //envia mensagem
+    mqtt.publish("miguel123", mensagem.c_str()); 
   }  
   mqtt.loop();
-  callback(byte velocidade);
 
   paraFrenteMotorA();
   darReMotorB();
@@ -223,4 +202,5 @@ void loop() {
   darReMotorA();
   paraFrenteMotorB();
   pararMotores();
+  callback(byte velocidade);
 }
