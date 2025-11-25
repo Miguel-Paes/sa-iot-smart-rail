@@ -13,10 +13,6 @@ PubSubClient mqtt(client); //Cria objeto para MQTT usando wifi
 
 DHT sensorDHT(DHTPIN, DHTTYPE);
 
-const String mensagem_ligar[6] = {"Acender", "Ligar", "On", "1", "True", "Xazam"};
-const String mensagem_desligar[5] = {"Apagar", "Desligar", "Off", "0", "False"};
-
-
 const byte pinoLdr = A0;
 int valorLdr = 0;
 const byte pinoTrig = 12;
@@ -27,11 +23,11 @@ float duracao, distancia, temperatura, umidade = 0;
 //declaracao de funcoes 
 // funcao que controla os leds de acordo com a temperatura
 void controladorLedsTemperatura(float temperature){
-  if(temperature > 20) && {
+  if(temperature > 25) {
     digitalWrite(ledVerde, HIGH);
     digitalWrite(ledVermelho, LOW);
     delay(1000);
-  } else if(temperature < 20){
+  } else if(temperature < 25){
     digitalWrite(ledVerde, LOW);
     digitalWrite(ledVermelho, HIGH);
     delay(1000);
@@ -44,18 +40,15 @@ void controladorLedsTemperatura(float temperature){
 
 // funcao que controla os leds de acordo com a umidade
 void controladorLedsUmidade(float humidity){
-  if(humidity > 20) {
+  if(humidity > 1000) {
     digitalWrite(ledVerde, HIGH);
     digitalWrite(ledVermelho, LOW);
-    delay(1000);
-  } else if(humidity < 20){
+  } else if(humidity < 1000){
     digitalWrite(ledVerde, LOW);
     digitalWrite(ledVermelho, HIGH);
-    delay(1000);
   } else {
     digitalWrite(ledVerde, LOW);
     digitalWrite(ledVermelho, LOW);
-    delay(1000);
   }
 }
 
@@ -73,6 +66,7 @@ void sensorTemperatura(float temperature){
   Serial.println(temperatura);
   delay(2000);
 }
+
 void sensorLuminosidade(int valorSensorLdr){
 	valorSensorLdr = analogRead(pinoLdr);
   Serial.println("Valor lido pelo LDR = ");
@@ -186,11 +180,11 @@ void loop() {
     mensagem = "Miguel: " + mensagem;
     mqtt.publish(TOPIC1, mensagem.c_str());
   }
+
+  callback(umidade, temperatura);
   sensorUmidade(temperatura);
   sensorTemperatura(temperatura);
   sensorLuminosidade(valorLdr);
   calcularDistanciaDuracao(distancia, duracao);
-  callback(umidade, temperatura);
-
   delay(1000);
 }
