@@ -7,6 +7,14 @@
 WiFiClient client; //cria objeto p/ wifi
 PubSubClient mqtt(client);
 
+// topicos
+
+const String topico1 = "SmartRail/S2/Presenca2"; 
+const String topico2 = "SmartRail/S2/Presenca3"; 
+const String topico3 = "SmartRail/S2/Servo1"; 
+const String topico4 = "SmartRail/S2/Led_RGB_s2"; 
+const String topico5 = "SmartRail/S2/Led_s2"; 
+
 Servo meuServo1;
 
 // declaração de variaveis
