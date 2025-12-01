@@ -4,10 +4,12 @@
 #include "env.h"
 
 WiFiClientSecure wifiClient;
-WiFiClient client;         // cria o objeto para o wifi
-PubSubClient mqtt(client);// cria o objeto para o mqtt usando wifi
+WiFiClient client;      
+PubSubClient mqtt(client);
 
-const String topico = "SmartRail/S4/Trem/Vel"; // nome do topico
+// topicos
+const String topico = "SmartRail/S4/Trem/Vel"; 
+const String topico2 = "SmartRail/S4/Trem/Controle_led_rgb_s4";
 
 // declaração de variaveis
 const byte ledVermelho = 23;
