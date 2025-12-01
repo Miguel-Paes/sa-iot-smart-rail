@@ -10,6 +10,14 @@ WiFiClientSecure wifiClient;
 WiFiClient client;          // cria o objeto para o wifi
 PubSubClient mqtt(client);  // cria o objeto para o mqtt usando wifi
 
+// Topicos
+
+const String topico = "SmartRail/S3/Presenca4"; 
+const String topico = "SmartRail/S3/Led_s3";
+const String topico = "SmartRail/S3/Servo2";
+const String topico = "SmartRail/S3/Servo3";
+const String topico = "SmartRail/S3/Led_rgb_s3";
+
 Servo meuServo1;  // cria um objeto do tipo servo
 Servo meuServo2;
 
