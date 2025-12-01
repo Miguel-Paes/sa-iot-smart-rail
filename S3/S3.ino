@@ -6,9 +6,11 @@
 #include <WiFiClientSecure.h>
 #include "env.h"
 
+// Objeto wifi
+
 WiFiClientSecure wifiClient;
-WiFiClient client;          // cria o objeto para o wifi
-PubSubClient mqtt(client);  // cria o objeto para o mqtt usando wifi
+WiFiClient client;         
+PubSubClient mqtt(client); 
 
 // Topicos
 
@@ -18,7 +20,9 @@ const String topico = "SmartRail/S3/Servo2";
 const String topico = "SmartRail/S3/Servo3";
 const String topico = "SmartRail/S3/Led_rgb_s3";
 
-Servo meuServo1;  // cria um objeto do tipo servo
+// Servos
+
+Servo meuServo1;  
 Servo meuServo2;
 
 // declaração de variaveis
@@ -142,7 +146,7 @@ void setup() {
   pinMode(ledVerde, OUTPUT);
   pinMode(ledAzul, OUTPUT);
 
-  meuServo1.attach(pinoServo1);  // associa o objeto Servo ao pino
+  meuServo1.attach(pinoServo1);  
   meuServo2.attach(pinoServo2);
   pinMode(pinoTrig, OUTPUT);
   pinMode(pinoEcho, INPUT);
