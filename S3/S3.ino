@@ -14,11 +14,11 @@ PubSubClient mqtt(client);
 
 // Topicos
 
-const String topico = "SmartRail/S3/Presenca4"; 
-const String topico = "SmartRail/S3/Led_s3";
-const String topico = "SmartRail/S3/Servo2";
-const String topico = "SmartRail/S3/Servo3";
-const String topico = "SmartRail/S3/Led_rgb_s3";
+const String topico1 = "SmartRail/S3/Presenca4"; 
+const String topico2 = "SmartRail/S3/Led_s3";
+const String topico3 = "SmartRail/S3/Servo2";
+const String topico4 = "SmartRail/S3/Servo3";
+const String topico5 = "SmartRail/S3/Led_rgb_s3";
 
 // Servos
 
