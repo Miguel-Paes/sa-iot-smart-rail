@@ -11,6 +11,15 @@ WiFiClientSecure wifiClient;
 WiFiClient client; //Cria objeto para wifi
 PubSubClient mqtt(client); //Cria objeto para MQTT usando wifi
 
+// topicos
+
+const String topico1 = "SmartRail/S1/Temp";
+const String topico2 = "SmartRail/S1/Umidade";
+const String topico3 = "SmartRail/S1/Lumn";
+const String topico4 = "SmartRail/S1/Presenca1";
+const String topico5 = "SmartRail/S1/Led_s1";
+const String topico6 = "SmartRail/S1/Led_rgb_s1";
+
 DHT sensorDHT(DHTPIN, DHTTYPE);
 
 const byte pinoLdr = A0;
