@@ -50,10 +50,20 @@ void callback(char* topic, byte* payload, unsigned long length){
   for(int i = 0; i < length; i++){
     mensagemRecebida += (char) payload[i];
   }
+  Serial.println("Mensagem recebida no topico: ");
+  Serial.println(topic);
+  Serial.println("| Conteudo: ");
+
+  // Conversao para inteiro
   byte int velocidade = mensagemRecebida.toInt();
   Serial.println(mensagemRecebida);
-  // fazer o controle de leds aqui
-  controladorLeds(velocidade);
+
+  // verificacao em qual topico chegou a mensagem
+  String topicoStr = String(topic);
+
+  if(topicoStr == "SmartRail/S4/Trem/Vel") {
+      controladorLeds(velocidade);
+  }
 }
 
 // funcao para conectar wifi
@@ -204,6 +214,7 @@ void setup() {
 }
 
 void loop() {
+  mqtt.loop();
   String mensagem = "";
   if(Serial.available() > 0){
     mensagem = Serial.readStringUntil('\n');
@@ -213,7 +224,6 @@ void loop() {
     //envia mensagem
     mqtt.publish("miguel123", mensagem.c_str()); 
   }  
-  mqtt.loop();
 
   paraFrenteMotorA();
   darReMotorB();
