@@ -10,7 +10,13 @@
 
 WiFiClientSecure wifiClient;
 WiFiClient client;         
-PubSubClient mqtt(client); 
+PubSubClient mqtt(client);
+
+//Conexão
+const char *mqtt_broker = "1acd7ac2686b4748913cce80ad4161df.s1.eu.hivemq.cloud";
+const int mqtt_port = 8883; // Porta padrão
+const char *mqtt_user = "user_placa_1";
+const char *mqtt_password = "Userplaca1";
 
 // Topicos
 
