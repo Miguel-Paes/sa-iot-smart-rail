@@ -20,7 +20,7 @@ const char *mqtt_password = "Userplaca1";
 //Tópicos - Publish
 const String topicoTemp = "SmartRail/S1/Temp";
 const String topicoUmid = "SmartRail/S1/Umidade";
-const String topico4 = "SmartRail/S1/Presenca1";
+const String topicoPres = "SmartRail/S1/Presenca1";
 
 //Tópicos - Publish/Subscribe
 const String topicoIlum = "SmartRail/S1/Lumn";
@@ -70,31 +70,34 @@ void sensorUmidade(float humidity){
   umidade = sensorDHT.readHumidity();
   Serial.print("Umidade [%]: ");
   Serial.print(umidade);
+  client.publish(topicoUmid, umidade.c_str());
   delay(2000);
 }
 
 void sensorTemperatura(float temperature){
   temperatura = sensorDHT.readTemperature();
-
   Serial.print("Temperatura [C]: ");
   Serial.println(temperatura);
+  client.publish(topicoTemp, temperatura.c_str());
   delay(2000);
 }
 
 void sensorLuminosidade(int valorSensorLdr){
-	valorSensorLdr = analogRead(pinoLdr);
+  valorSensorLdr = analogRead(pinoLdr);
   Serial.println("Valor lido pelo LDR = ");
   Serial.println(valorSensorLdr);
+  client.publish(topicoIlum, valorSensorLdr.c_str());
   delay(1000);
 }
 
 void calcularDistanciaDuracao(float distance, float duration)
 {
-	duration = pulseIn(pinoEcho, HIGH);
+  duration = pulseIn(pinoEcho, HIGH);
   distance = (duration*0.343)/2;
   Serial.println("Distancia: ");
   Serial.println(distance);
-	delay(100);
+  client.publish(topicoPres, distance.c_str());
+  delay(100);
 }
 
 // int nome[ = {}]
@@ -180,7 +183,7 @@ void setup() {
   conectarBroker();
 
   mqtt.setCallback(callback);
-  mqtt.subscribe(TOPIC1);
+  mqtt.subscribe(topicoIlum);
   Serial.println("\nConectado com sucesso ao Broker");
 }
 
