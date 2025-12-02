@@ -119,31 +119,31 @@ void conectarWifi() {
 }
 
 // funcao configurar servidor do broker/porta:
-String configurarServidorBroker() {
-  // configura o servidor do broker/porta:
-  mqtt.setServer(BROKER_URL, BROKER_PORT);
+String configurarServidorBroker(){
+  // configura o servidor do broker/porta
+  mqtt.setServer(*mqtt_broker, mqtt_port);
   Serial.println("Conectando no Broker");
+  
+  // cria um userID
+  String userID = "S4-NATHAN"; 
 
-  // cria um nome que começa com s3-:
-  String userID = "S3-RUBENS";
-
-  // junta o "s3-" com um numero aleatorio hexadecimal:
+  // junta o "s4-" com um numero aleatorio hexadecimal
   userID += String(random(0xffff), HEX);
   return userID;
 }
 
-// funcao para conectar broker:
-void conectarBroker() {
+// funcao para conectar broker
+void conectarBroker(){
   String userID = configurarServidorBroker();
-  // Loop para conectar no broker:
-  while (!mqtt.connected()) {
-    if (mqtt.connect(userID.c_str(), BROKER_USR_NAME, BROKER_USR_PASS)) {
+  // Loop para conectar no broker
+  while(!mqtt.connected()){
+    if(mqtt.connect(userID.c_str(), *mqtt_user, *mqtt_password)){
       Serial.print('.');
       ledcWrite(ledVermelho, 150);
       ledcWrite(ledAzul, 150);
       ledcWrite(ledVerde, 0);
       delay(2000);
-    } else {  // caso dê erro de conexao com broker:
+    } else { // caso dê erro de conexao com broker
       ledcWrite(ledVermelho, 255);
       ledcWrite(ledAzul, 0);
       ledcWrite(ledVerde, 0);
