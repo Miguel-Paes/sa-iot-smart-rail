@@ -1,4 +1,4 @@
-//ARQUIVO S1 - MIGUEL PAES DA SILVA - SMART RAIL (SR)
+ //ARQUIVO S1 - MIGUEL PAES DA SILVA - SMART RAIL (SR)
 
 #include <WiFi.h>
 #include <PubSubClient.h>
@@ -17,14 +17,13 @@ const int mqtt_port = 8883; // Porta padrão
 const char *mqtt_user = "user_placa_1";
 const char *mqtt_password = "Userplaca1";
 
-// topicos
-
-const String topico1 = "SmartRail/S1/Temp";
-const String topico2 = "SmartRail/S1/Umidade";
-const String topico3 = "SmartRail/S1/Lumn";
+//Tópicos - Publish
+const String topicoTemp = "SmartRail/S1/Temp";
+const String topicoUmid = "SmartRail/S1/Umidade";
 const String topico4 = "SmartRail/S1/Presenca1";
-const String topico5 = "SmartRail/S1/Led_s1";
-const String topico6 = "SmartRail/S1/Led_rgb_s1";
+
+//Tópicos - Publish/Subscribe
+const String topicoIlum = "SmartRail/S1/Lumn";
 
 DHT sensorDHT(DHTPIN, DHTTYPE);
 
