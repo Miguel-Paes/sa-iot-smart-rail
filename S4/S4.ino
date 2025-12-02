@@ -13,11 +13,8 @@ const int mqtt_port = 8883; // Porta padrão
 const char *mqtt_user = "user_placa_4";
 const char *mqtt_password = "Userplaca4";
 
-// topicos - Publish
+// topicos - Subscribe
 const String topicControleVel = "SmartRail/S4/Trem/Vel"; 
-
-// topicos - Subscribe 
-const String topicControleLedsRgbs = "SmartRail/S4/Trem/Controle_led_rgb_s4";
 
 // declaração de variaveis
 const byte ledVermelho = 23;
@@ -82,7 +79,7 @@ void conectarWifi(){
 // funcao configurar servidor do broker/porta
 String configurarServidorBroker(){
   // configura o servidor do broker/porta
-  mqtt.setServer(BROKER_URL, BROKER_PORT);
+  mqtt.setServer(*mqtt_broker, mqtt_port);
   Serial.println("Conectando no Broker");
   
   // cria um userID
@@ -98,7 +95,7 @@ void conectarBroker(){
   String userID = configurarServidorBroker();
   // Loop para conectar no broker
   while(!mqtt.connected()){
-    if(mqtt.connect(userID.c_str(), BROKER_USR_NAME, BROKER_USR_PASS)){
+    if(mqtt.connect(userID.c_str(), *mqtt_user, *mqtt_password)){
       Serial.print('.');
       ledcWrite(ledVermelho, 150);
       ledcWrite(ledAzul, 150);
