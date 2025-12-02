@@ -13,9 +13,11 @@ const int mqtt_port = 8883; // Porta padrão
 const char *mqtt_user = "user_placa_4";
 const char *mqtt_password = "Userplaca4";
 
-// topicos
-const String topico = "SmartRail/S4/Trem/Vel"; 
-const String topico2 = "SmartRail/S4/Trem/Controle_led_rgb_s4";
+// topicos - Publish
+const String topicControleVel = "SmartRail/S4/Trem/Vel"; 
+
+// topicos - Subscribe 
+const String topicControleLedsRgbs = "SmartRail/S4/Trem/Controle_led_rgb_s4";
 
 // declaração de variaveis
 const byte ledVermelho = 23;
