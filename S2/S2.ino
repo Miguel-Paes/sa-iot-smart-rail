@@ -88,14 +88,28 @@ void sensorLuminosidade(int valor){
 }
 
 void callback(char* topic, byte* payload, unsigned long length){
-  String mensagemRecebida = "";
+  String mensagemRecebida1 = "";
+  String mensagemRecebida2 = "";
   for(int i = 0; i < length; i++){
-    mensagemRecebida += (char) payload[i];
+    mensagemRecebida1 += (char) payload[i];
+	mensagemRecebida2 += (char) payload[i];
   }
-  byte int velocidade = mensagemRecebida.toInt();
-  Serial.println(mensagemRecebida);
-  // fazer o controle de leds aqui
+  // conversao para inteiro
+  byte int distance1 = mensagemRecebida1.toInt();
+  byte int distance2 = mensagemRecebida2.toInt();
+  Serial.println(mensagemRecebida1);
+  Serial.println(mensagemRecebida2);
 
+  // Verificacao em qual topico a mensagem chegou
+  String topicoStr = String(topic);
+
+  if(topicoStr == "SmartRail/S2/Presenca1") {
+     controladorLedsPresenca(distance1);
+  }
+
+  if(topicoStr == "SmartRail/S2/Presenca2"){
+    controladorLedsPresenca(distance2);
+  }
 }
 
 void conectarWifi(){
