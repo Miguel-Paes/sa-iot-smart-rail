@@ -18,13 +18,15 @@ const int mqtt_port = 8883; // Porta padrão
 const char *mqtt_user = "user_placa_1";
 const char *mqtt_password = "Userplaca1";
 
-// Topicos
+// Topicos - Publish
+const String topicoServ1 = "SmartRail/S3/Serv1"; 
+const String topicoServ2 = "SmartRail/S3/Serv2";
 
-const String topico1 = "SmartRail/S3/Presenca4"; 
-const String topico2 = "SmartRail/S3/Led_s3";
-const String topico3 = "SmartRail/S3/Servo2";
-const String topico4 = "SmartRail/S3/Servo3";
-const String topico5 = "SmartRail/S3/Led_rgb_s3";
+// Topicos - Publish/Subscribe
+const String topicoPres = "SmartRail/S3/Presenca";
+
+// Topicos - Subscribe 
+const String topicoPubIlum = "SmartRail/S1/Ilmn";
 
 // Servos
 
