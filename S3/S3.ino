@@ -1,39 +1,39 @@
 //ARQUIVO S3 - VINICIUS RUBENS DOS SANTOS - SMART RAIL (SR)
 
+//Bibliotecas: 
 #include <Servo.h>
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include <WiFiClientSecure.h>
 #include "env.h"
 
-// Objeto wifi
-
+// Objeto wifi:
 WiFiClientSecure wifiClient;
 WiFiClient client;         
 PubSubClient mqtt(client);
 
-//Conexão
+//Conexão:
 const char *mqtt_broker = "1acd7ac2686b4748913cce80ad4161df.s1.eu.hivemq.cloud";
 const int mqtt_port = 8883; // Porta padrão
 const char *mqtt_user = "user_placa_1";
 const char *mqtt_password = "Userplaca1";
 
-// Topicos - Publish
+// Topicos - Publish:
 const String topicoServ1 = "SmartRail/S3/Serv1"; 
 const String topicoServ2 = "SmartRail/S3/Serv2";
 
-// Topicos - Publish/Subscribe
+// Topicos - Publish/Subscribe:
 const String topicoPres = "SmartRail/S3/Presenca";
 
-// Topicos - Subscribe 
+// Topicos - Subscribe :
 const String topicoPubIlum = "SmartRail/S1/Ilmn";
 
-// Servos
+// Servos:
 
 Servo meuServo1;  
 Servo meuServo2;
 
-// declaração de variaveis
+// declaração de variaveis:
 const byte ldr = A0;
 const byte pinoTrig = 13;
 const byte pinoEcho = 12;
@@ -42,7 +42,7 @@ const byte pinoServo2 = 3;
 int valorLdr = 0;
 float duracao, distancia;
 
-// declaração de funções
+// declaração de funções:
 void controladorLedsPresenca(float distance) {
   if (distance > 1000) {
     digitalWrite(ledVerde, HIGH);
@@ -63,7 +63,7 @@ void callback(char* topic, byte* payload, unsigned long length) {
   }
   byte int velocidade = mensagemRecebida.toInt();
   Serial.println(mensagemRecebida);
-  // controle dos leds
+  // controle dos leds:
   controladorLeds(distance);
 }
 
@@ -76,33 +76,33 @@ void calcularDistanciaDuracao(float distance, float duration) {
 }
 
 void atuadorServo1() {
-  // mover o servo motor para 0 graus
+  // mover o servo motor para 0 graus:
   meuServo1.write(0);
   delay(1000);
-  // mover o servo para 180 graus
+  // mover o servo para 180 graus:
   meuServo1.write(180);
   delay(1000);
-  // retorna para a posição inicial
+  // retorna para a posição inicial:
   meuServo1.write(90);
   delay(1000);
 }
 
 void atuadorServo2() {
-  // mover o servo motor para 0 graus
+  // mover o servo motor para 0 graus:
   meuServo2.write(0);
   delay(1000);
-  // mover o servo para 180 graus
+  // mover o servo para 180 graus:
   meuServo2.write(180);
   delay(1000);
-  // retorna para a posição inicial
+  // retorna para a posição inicial:
   meuServo2.write(90);
   delay(1000);
 }
 
-// funcao para conectar wifi
+// funcao para conectar wifi:
 void conectarWifi() {
   Serial.println("Conectando no WiFi");
- // Loop para conectar no wifi
+ // Loop para conectar no wifi:
   while (WiFi.status() != WL_CONNECTED) {
     ledcWrite(ledVermelho, 150);
     ledcWrite(ledVerde, 150);
@@ -112,24 +112,24 @@ void conectarWifi() {
   Serial.println("\n Conectado com sucesso!");
 }
 
-// funcao configurar servidor do broker/porta
+// funcao configurar servidor do broker/porta:
 String configurarServidorBroker() {
-  // configura o servidor do broker/porta
+  // configura o servidor do broker/porta:
   mqtt.setServer(BROKER_URL, BROKER_PORT);
   Serial.println("Conectando no Broker");
 
-  // cria um nome que começa com s3-
+  // cria um nome que começa com s3-:
   String userID = "S3-RUBENS";
 
-  // junta o "s3-" com um numero aleatorio hexadecimal
+  // junta o "s3-" com um numero aleatorio hexadecimal:
   userID += String(random(0xffff), HEX);
   return userID;
 }
 
-// funcao para conectar broker
+// funcao para conectar broker:
 void conectarBroker() {
   String userID = configurarServidorBroker();
-  // Loop para conectar no broker
+  // Loop para conectar no broker:
   while (!mqtt.connected()) {
     if (mqtt.connect(userID.c_str(), BROKER_USR_NAME, BROKER_USR_PASS)) {
       Serial.print('.');
@@ -137,7 +137,7 @@ void conectarBroker() {
       ledcWrite(ledAzul, 150);
       ledcWrite(ledVerde, 0);
       delay(2000);
-    } else {  // caso dê erro de conexao com broker
+    } else {  // caso dê erro de conexao com broker:
       ledcWrite(ledVermelho, 255);
       ledcWrite(ledAzul, 0);
       ledcWrite(ledVerde, 0);
@@ -146,10 +146,10 @@ void conectarBroker() {
   }
 }
 
-//codigo principal
+//codigo principal:
 
 void setup() {
-  // define os pinos dos leds
+  // define os pinos dos leds:
   pinMode(ledVermelho, OUTPUT);
   pinMode(ledVerde, OUTPUT);
   pinMode(ledAzul, OUTPUT);
@@ -159,20 +159,20 @@ void setup() {
   pinMode(pinoTrig, OUTPUT);
   pinMode(pinoEcho, INPUT);
 
-  // define os leds como entrada analogico
+  // define os leds como entrada analogico:
   ledcAttach(ledVermelho, 5000, 8);
   ledcAttach(ledVerde, 5000, 8);
   ledcAttach(ledAzul, 5000, 8);
 
-  //configuração do wifi
+  //configuração do wifi:
   wifiClient.setInscure();
   Serial.begin(115200);    // configura a placa para mostrar na tela
   WiFi.begin(SSID, PASS);  // tenta conectar na rede
 
-  //  conectando no wifi
+  //  conectando no wifi:
   conectarWifi();
 
-  // conectando no broker
+  // conectando no broker:
   conectarBroker();
 
   mqtt.subscribe(topico.c_str());  
