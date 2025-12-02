@@ -67,7 +67,7 @@ void controladorLedsUmidade(float humidity){
 }
 
 void sensorUmidade(float humidity){
-  umidade = sensorDHT.readHumidity();
+  humidity = sensorDHT.readHumidity();
   Serial.print("Umidade [%]: ");
   Serial.print(umidade);
   client.publish(topicoUmid, umidade.c_str());
@@ -75,7 +75,7 @@ void sensorUmidade(float humidity){
 }
 
 void sensorTemperatura(float temperature){
-  temperatura = sensorDHT.readTemperature();
+  temperature = sensorDHT.readTemperature();
   Serial.print("Temperatura [C]: ");
   Serial.println(temperatura);
   client.publish(topicoTemp, temperatura.c_str());
