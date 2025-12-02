@@ -61,10 +61,14 @@ void callback(char* topic, byte* payload, unsigned long length) {
   for (int i = 0; i < length; i++) {
     mensagemRecebida += (char)payload[i];
   }
-  byte int velocidade = mensagemRecebida.toInt();
+  byte int distance = mensagemRecebida.toInt();
   Serial.println(mensagemRecebida);
-  // controle dos leds:
-  controladorLeds(distance);
+
+  String topicoStr = String(topic);
+
+  if(topicoStr == "SmartRail/S3/Presenca") {
+      controladorLeds(distance);
+  }
 }
 
 void calcularDistanciaDuracao(float distance, float duration) {
