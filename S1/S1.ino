@@ -101,16 +101,30 @@ void calcularDistanciaDuracao(float distance, float duration)
 }
 
 // int nome[ = {}]
-void callback(char* topic, byte* payload, unsigned long length){
+void callback(char* topic, byte* payload, unsigned long length) {
   String mensagemRecebida = "";
-  for(int i = 0; i < length; i++){
-    mensagemRecebida += (char) payload[i];
+  
+  // Converte payload para String
+  for(int i = 0; i < length; i++) {
+    mensagemRecebida += (char)payload[i];
   }
-  byte int velocidade = mensagemRecebida.toInt();
+  
+  Serial.print("Mensagem recebida no tópico: ");
+  Serial.print(topic);
+  Serial.print(" | Conteúdo: ");
   Serial.println(mensagemRecebida);
-  // fazer o controle de leds aqui
-  controladorLedsUmidade(umidade);
-  controladorLedsTemperatura(temperatura);
+  
+  // Converte para inteiro
+  int valorRecebido = mensagemRecebida.toInt();
+  
+  // Verifica em qual tópico chegou a mensagem
+  String topicoStr = String(topic);
+  
+  if(topicoStr == "SmartRail/S1/Lumn") {
+    // Controle de luminosidade remoto
+    Serial.print("Controle de iluminação remoto: ");
+    Serial.println(valorRecebido);
+  }
 }
 
 void conectarWifi(){
@@ -188,6 +202,7 @@ void setup() {
 }
 
 void loop() {
+  mqtt.loop();
 
   String mensagem = "";
   if(Serial.available() > 0) {
@@ -197,8 +212,7 @@ void loop() {
     mensagem = "Miguel: " + mensagem;
     mqtt.publish(TOPIC1, mensagem.c_str());
   }
-
-  callback(umidade, temperatura);
+ 
   sensorUmidade(temperatura);
   sensorTemperatura(temperatura);
   sensorLuminosidade(valorLdr);
