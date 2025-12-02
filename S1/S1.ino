@@ -145,7 +145,7 @@ String configurarServidorBroker(){
   Serial.println("Conectando no Broker");
   
   // cria um userID
-  String userID = "S4-NATHAN"; 
+  String userID = "S1-MIGUEL"; 
 
   // junta o "s4-" com um numero aleatorio hexadecimal
   userID += String(random(0xffff), HEX);
@@ -195,8 +195,8 @@ void setup() {
   //conectando no broker
   conectarBroker();
 
-  mqtt.setCallback(callback);
   mqtt.subscribe(topicoIlum);
+  mqtt.setCallback(callback);
   Serial.println("\nConectado com sucesso ao Broker");
 }
 
