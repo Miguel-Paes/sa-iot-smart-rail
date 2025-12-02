@@ -100,7 +100,6 @@ void calcularDistanciaDuracao(float distance, float duration)
   delay(100);
 }
 
-// int nome[ = {}]
 void callback(char* topic, byte* payload, unsigned long length) {
   String mensagemRecebida = "";
   
