@@ -27,6 +27,8 @@ const String topicoPres = "SmartRail/S3/Presenca";
 
 // Topicos - Subscribe :
 const String topicoPubIlum = "SmartRail/S1/Ilmn";
+const String topicoPres1 = "SmartRail/S2/Presenca1"; 
+const String topicoPres2 = "SmartRail/S2/Presenca2"; 
 
 // Servos:
 
